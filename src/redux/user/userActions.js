@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { ADD_USER, FETCH_USERS_BEGIN, FETCH_USERS_FAILURE, FETCH_USERS_SUCCESS } from "./userTypes"
+import { ADD_USER, FETCH_USERS_BEGIN, FETCH_USERS_FAILURE, FETCH_USERS_SUCCESS, REMOVE_USER } from "./userTypes"
 
 
 export const fetchUsersBegin = ()=>{
@@ -30,6 +30,13 @@ export const addUser = (user)=>{
     }
 }
 
+export const removeUser = (user)=>{
+    return {
+        type:REMOVE_USER,
+        payload:user
+    }
+}
+
 export const fetchUsers = ()=>{
     return (dispatch)=>{
         dispatch(fetchUsersBegin)
@@ -51,6 +58,20 @@ export const createUser = (user)=>{
         .then(res=>{
             console.log(res);
             dispatch(addUser(user))
+        })
+        .catch(err=>{
+            dispatch(fetchUsersFailure(err.message))
+        })
+    }
+}
+
+export const deleteUser = (user)=>{
+    return (dispatch)=>{
+        dispatch(fetchUsersBegin)
+        axios.delete(`https://jsonplaceholder.typicode.com/users/${user.id}`)
+        .then(res=>{
+            console.log(res);
+            dispatch(removeUser(user))
         })
         .catch(err=>{
             dispatch(fetchUsersFailure(err.message))
